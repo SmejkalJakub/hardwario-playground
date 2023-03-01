@@ -109,6 +109,7 @@ export default class extends Component {
                                 <NavLink to="/messages" title={mqttOffline ? "Mqtt brouker is shut down" : null}>{i18n.__("Messages")} {mqttOffline ?<i className="fa fa-warning"></i> : null}</NavLink>
                                 <NavLink to="/functions" title={nodeRedOffline ? "Node-RED is shut down": null}>{i18n.__("Functions")} {nodeRedOffline ? <i className="fa fa-warning"></i> : null}</NavLink>
                                 <NavLink to="/dashboard">{i18n.__("dashboard")}</NavLink>
+                                <NavLink to="/blockly">{i18n.__("Blockly")}</NavLink>
                                 <NavLink to="/firmware">{i18n.__("firmware")}</NavLink>
                                 <a href="https://tower.hardwario.com/en/latest/basics/hardwario-playground" onClick={openExternal}>{i18n.__("Help")}</a>
                                 {/* <NavLink to="/settings">{i18n.__("settings")}</NavLink> */}
@@ -129,6 +130,7 @@ export default class extends Component {
                         <RouteWithProps path="/" exact component={Devices} model={this.radiomanager} />
                         <RouteIframe path="/functions" src="http://127.0.0.1:1880/" id="node-red" />
                         <RouteIframe path="/dashboard" src="http://127.0.0.1:1880/ui" id="node-red-dashbord" />
+                        <RouteIframe path="/blockly" src="http://127.0.0.1:8000" id="blockly" />
                         <RouteWithProps path="/messages" component={MqttLog} model={this.mqttlog}/>
                         <RouteWithProps path="/bridge" component={Bridge} model={this.bridge}/>
                         <Route path="/firmware" component={Firmware} />
