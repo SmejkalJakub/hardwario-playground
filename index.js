@@ -25,89 +25,89 @@ let windows = [];
 // Keep a reference for dev mode
 let dev = false;
 if (process.defaultApp || /[\\/]electron-prebuilt[\\/]/.test(process.execPath) || /[\\/]electron[\\/]/.test(process.execPath)) {
-  dev = true;
+    dev = true;
 }
 
 function createWindow() {
-  if (!app.isReady()) return;
+    if (!app.isReady()) return;
 
-  let mainWindow;
-  mainWindow = new BrowserWindow({
-    width: 1000,
-    minWidth: 1000,
-    minHeight: 480,
-    show: false,
-    icon: path.join(__dirname, 'src', 'assets', 'icons', 'icon.png'),
-    //,titleBarStyle: 'hidden' future purpose?
-    webPreferences: {
-        nodeIntegration: true,
-        contextIsolation: false,
-        enableRemoteModule: true,
-    },
-  });
-
-  CustomMenu.setup(!dev);
-
-  // Load the index.html of the app.
-  let indexPath;
-  if (dev && process.argv.indexOf("--noDevServer") === -1) {
-    indexPath = url.format({
-      protocol: "http:",
-      host: "localhost:8080",
-      pathname: "index.html",
-      slashes: true
+    let mainWindow;
+    mainWindow = new BrowserWindow({
+        width: 1000,
+        minWidth: 1000,
+        minHeight: 480,
+        show: false,
+        icon: path.join(__dirname, 'src', 'assets', 'icons', 'icon.png'),
+        //,titleBarStyle: 'hidden' future purpose?
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true,
+        },
     });
-  } else {
-    indexPath = url.format({
-      protocol: "file:",
-      pathname: path.join(__dirname, "dist", "index.html"),
-      slashes: true
+
+    CustomMenu.setup(!dev);
+
+    // Load the index.html of the app.
+    let indexPath;
+    if (dev && process.argv.indexOf("--noDevServer") === -1) {
+        indexPath = url.format({
+            protocol: "http:",
+            host: "localhost:8080",
+            pathname: "index.html",
+            slashes: true
+        });
+    } else {
+        indexPath = url.format({
+            protocol: "file:",
+            pathname: path.join(__dirname, "dist", "index.html"),
+            slashes: true
+        });
+    }
+    mainWindow.loadURL(indexPath);
+    mainWindow.once("ready-to-show", () => {
+        mainWindow.show();
+        // Open the DevTools automatically if developing
+        if (dev) {
+            mainWindow.webContents.openDevTools();
+        }
     });
-  }
-  mainWindow.loadURL(indexPath);
-  mainWindow.once("ready-to-show", () => {
-    mainWindow.show();
-    // Open the DevTools automatically if developing
-    if (dev) {
-      mainWindow.webContents.openDevTools();
-    }
-  });
 
-  let timer = null;
+    let timer = null;
 
-  mainWindow.on('close', (e) => {
-    if (timer) {
-        clearTimeout(timer);
-    }
+    mainWindow.on('close', (e) => {
+        if (timer) {
+            clearTimeout(timer);
+        }
 
-    timer = setTimeout(()=>{
+        timer = setTimeout(() => {
 
-        dialog.showMessageBox(mainWindow, {
-            type: "warning",
-            buttons: ["Cancel", "Close without Saving"],
-            title: "Warning",
-            message: "Node-RED contains unsaved changes"
-        }).then((result)=>{
-            console.log('showMessageBox', 'response', result);
-            if (result.response == 1) {
-                mainWindow.send("iframe:node-red:visible", false);
-                timer = setTimeout(()=>{mainWindow.close()}, 100);
-            }
-        }).catch(err => {
-          console.error('showMessageBox', err);
-        })
+            dialog.showMessageBox(mainWindow, {
+                type: "warning",
+                buttons: ["Cancel", "Close without Saving"],
+                title: "Warning",
+                message: "Node-RED contains unsaved changes"
+            }).then((result) => {
+                console.log('showMessageBox', 'response', result);
+                if (result.response == 1) {
+                    mainWindow.send("iframe:node-red:visible", false);
+                    timer = setTimeout(() => { mainWindow.close() }, 100);
+                }
+            }).catch(err => {
+                console.error('showMessageBox', err);
+            })
 
-    }, 1000);
-  })
+        }, 1000);
+    })
 
-  mainWindow.on("closed", function () {
-    if (timer) clearTimeout(timer);
-    const index = windows.indexOf(mainWindow);
-    windows.splice(index, 1);
-    mainWindow = null;
-  });
+    mainWindow.on("closed", function () {
+        if (timer) clearTimeout(timer);
+        const index = windows.indexOf(mainWindow);
+        windows.splice(index, 1);
+        mainWindow = null;
+    });
 
-  windows.push(mainWindow);
+    windows.push(mainWindow);
 }
 
 let userDataPath = app.getPath("userData");
@@ -120,7 +120,7 @@ Settings.setup();
 MqttBroker.setup();
 Gateway.setup();
 Firmware.setup();
-NodeREDWorker.setup().finally(()=>{
+NodeREDWorker.setup().finally(() => {
     for (let i in windows) {
         windows[i].reload();
     }
@@ -132,9 +132,9 @@ BlocklyWorker.setup();
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {
     console.log("window-all-closed");
-    if (process.platform != 'darwin'){
-      console.log("app.quit");
-      app.quit();
+    if (process.platform != 'darwin') {
+        console.log("app.quit");
+        app.quit();
     }
 });
 
@@ -143,7 +143,7 @@ app.on("app:window:new", createWindow);
 app.on("ready", createWindow);
 
 app.on("activate", () => {
-  if (windows.length == 0) {
-    createWindow();
-  }
+    if (windows.length == 0) {
+        createWindow();
+    }
 });

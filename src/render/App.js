@@ -17,6 +17,7 @@ import Gateway from "./components/Gateway";
 import Devices from "./components/Devices";
 import Home from "./components/Home";
 import Bridge from "./components/Bridge";
+import Blockly from "./components/Blockly";
 
 // Import SCSS
 import "../assets/scss/index.scss";
@@ -99,15 +100,14 @@ export default class extends Component {
         return (
             <HashRouter>
                 <div id="app" >
-
                     <div id="navbar" key="navbar">
                         <aside className={this.state.visible ? "fade-in" : "fade-out"}>
                             <nav>
                                 {/* <NavLink exact to="/">{i18n.__("home")}</NavLink> */}
-                                <NavLink to="/" exact title={gwOffline ? "No Radio Dongle connected" : null}>{i18n.__("Devices")} {gwOffline ?  <i className="fa fa-warning"></i> : null}</NavLink>
-                                <NavLink to="/bridge" title={bridgeOffline ? "Bridge is not connected" : null}>{i18n.__("bridge")} {bridgeOffline ?<i className="fa fa-warning"></i> : null}</NavLink>
-                                <NavLink to="/messages" title={mqttOffline ? "Mqtt brouker is shut down" : null}>{i18n.__("Messages")} {mqttOffline ?<i className="fa fa-warning"></i> : null}</NavLink>
-                                <NavLink to="/functions" title={nodeRedOffline ? "Node-RED is shut down": null}>{i18n.__("Functions")} {nodeRedOffline ? <i className="fa fa-warning"></i> : null}</NavLink>
+                                <NavLink to="/" exact title={gwOffline ? "No Radio Dongle connected" : null}>{i18n.__("Devices")} {gwOffline ? <i className="fa fa-warning"></i> : null}</NavLink>
+                                <NavLink to="/bridge" title={bridgeOffline ? "Bridge is not connected" : null}>{i18n.__("bridge")} {bridgeOffline ? <i className="fa fa-warning"></i> : null}</NavLink>
+                                <NavLink to="/messages" title={mqttOffline ? "Mqtt brouker is shut down" : null}>{i18n.__("Messages")} {mqttOffline ? <i className="fa fa-warning"></i> : null}</NavLink>
+                                <NavLink to="/functions" title={nodeRedOffline ? "Node-RED is shut down" : null}>{i18n.__("Functions")} {nodeRedOffline ? <i className="fa fa-warning"></i> : null}</NavLink>
                                 <NavLink to="/dashboard">{i18n.__("dashboard")}</NavLink>
                                 <NavLink to="/blockly">{i18n.__("Blockly")}</NavLink>
                                 <NavLink to="/firmware">{i18n.__("firmware")}</NavLink>
@@ -126,17 +126,17 @@ export default class extends Component {
 
                     <main key="main">
                         {/* <Home path="/" exact/> */}
-                        <Route path="/settings" component={Settings}/>
+                        <Route path="/settings" component={Settings} />
                         <RouteWithProps path="/" exact component={Devices} model={this.radiomanager} />
                         <RouteIframe path="/functions" src="http://127.0.0.1:1880/" id="node-red" />
                         <RouteIframe path="/dashboard" src="http://127.0.0.1:1880/ui" id="node-red-dashbord" />
-                        <RouteIframe path="/blockly" src="http://127.0.0.1:8000" id="blockly" />
-                        <RouteWithProps path="/messages" component={MqttLog} model={this.mqttlog}/>
-                        <RouteWithProps path="/bridge" component={Bridge} model={this.bridge}/>
-                        <Route path="/firmware" component={Firmware} />
+                        <Route path="/blockly" component={Blockly} />
+                        <RouteWithProps path="/messages" component={MqttLog} model={this.mqttlog} />
+                        <RouteWithProps path="/bridge" component={Bridge} model={this.bridge} />
+                        <Route path="/firmware/:fw?" component={Firmware} />
                     </main>
 
-                    <ToastContainer position="top-right" autoClose={2000} closeOnClick/>
+                    <ToastContainer position="top-right" autoClose={2000} closeOnClick />
                 </div>
             </HashRouter>
         )

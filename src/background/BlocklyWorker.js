@@ -1,7 +1,9 @@
-const blockly = require("blockly-test-nodejs");
+const blockly = require("hardwario-blockly-dev");
+const shell = require('shelljs');
 
 function setup() {
-    //blockly.init();
+    shell.config.execPath = shell.which('node').toString()
+    blockly.init();
 }
 
 module.exports = {
