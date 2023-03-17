@@ -13,16 +13,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest]
         include:
         - os: ubuntu-latest
           environment: linux
-
-        - os: windows-latest
-          environment: windows
-
-        - os: macos-latest
-          environment: macos
 
     runs-on: ${{ matrix.os }}
     environment: ${{ matrix.environment }}
@@ -36,11 +30,6 @@ jobs:
 
     - name: Install node-gyp
       run: npm install --global node-gyp@latest
-
-    - name: patch node gyp on windows to support Visual Studio 2019
-      if: matrix.os == 'windows-latest'
-      shell: powershell
-      run: npm prefix -g | % {npm config set node_gyp "$_\node_modules\node-gyp\bin\node-gyp.js"}
 
     - name: Install
       run: npm install
@@ -57,24 +46,6 @@ jobs:
           npm run package-linux-appimage
           chmod +x release/*.AppImage
 
-    - name: Build for Windows
-      if: matrix.environment == 'windows'
-      env:
-        CSC_LINK: ${{ secrets.CERT_FILE }}
-        CSC_KEY_PASSWORD: ${{ secrets.CERT_PASS }}
-      run: |
-          npm run package-win64
-
-    - name: Build for macOS
-      if: matrix.environment == 'macos'
-      env:
-        CSC_LINK: ${{ secrets.CERT_FILE }}
-        CSC_KEY_PASSWORD: ${{ secrets.CERT_PASS }}
-        APPLEID: ${{ secrets.APPLEID }}
-        APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
-      run: |
-          npm run package-mac
-
     - name: Artifacts
       uses: actions/upload-artifact@v2
       with:
@@ -83,13 +54,11 @@ jobs:
           release/*.deb
           release/*.AppImage
           release/*.snap
-          release/*.dmg
           release/*.tar.gz
-          release/*.exe
 
     - name: Publish to GitHub Releases
       if: ${{ github.event_name == 'release' }}
-      uses: softprops/action-gh-release@v0.1.5
+      uses: softprops/action-gh-release@v1
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
@@ -97,6 +66,4 @@ jobs:
           release/*.deb
           release/*.AppImage
           release/*.snap
-          release/*.dmg
           release/*.tar.gz
-          release/*.exe
